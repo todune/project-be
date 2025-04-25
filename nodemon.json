@@ -1,0 +1,13 @@
+{
+     "watch": ["src"],
+     "ext": ".ts,.js",
+     "ignore": [
+          "src/queue/*",
+          "queue/*",
+          "*/queue/*",
+          "uploads/*",
+          "node_modules/*",
+          "dist/*"
+     ],
+     "exec": "ts-node --files ./src/server.ts"
+}
