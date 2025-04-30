@@ -1,87 +1,56 @@
-export enum OrderStatus {
-     DOING = 'Đang giao hàng',
-     DONE = 'Đã giao hàng',
-     REFUND = 'Đã hoàn trả',
-     CANCEL = 'Đã hủy',
+export enum HttpStatus {
+     OK = 200,
+     BAD_REQUEST = 400,
+     UNAUTHORIZED = 401,
+     FORBIDDEN = 403,
+     NOT_FOUND = 404,
+     VALIDATION_ERROR = 422,
+     INTERNAL_ERROR = 500,
+     TOO_MANY_REQUESTS = 429,
 }
 
-export enum DeviceStatusType {
-     NORMAL = 'Bình thường',
-     REPAIRING = 'Đang sửa chữa',
-     BROKEN = 'Hư hỏng',
+export enum ErrorType {
+     VALIDATION = 'VALIDATION_ERROR',
+     AUTHENTICATION = 'AUTHENTICATION_ERROR',
+     AUTHORIZATION = 'AUTHORIZATION_ERROR',
+     NOT_FOUND = 'NOT_FOUND',
+     BAD_REQUEST = 'BAD_REQUEST',
+     INTERNAL = 'INTERNAL_ERROR',
+     TOO_MANY_REQUESTS = 'TOO_MANY_REQUESTS',
 }
 
-export enum OrderStatusType {
-     NEW = 'Mới',
-     PENDING = 'Chờ duyệt',
-     APPROVED = 'Đã duyệt',
-     RECEIVED = 'Đã nhận',
-     PENDING_CHECK = 'Chờ kiểm tra',
-     CHECKED = 'Đã kiểm tra',
-     REFUNDED = 'Đã hoàn trả',
-}
-
-export interface MulterRequest extends Request {
-     files: {
-          deviceImage?: Express.Multer.File[]
-          detailImage?: Express.Multer.File[]
-     }
-}
-
-export interface UploadedFile {
-     filename: string
-     originalname: string
-}
-
-export interface FileData {
-     key: string
-     type: string
-     value: string
-     name: string
-     linkDb?: string
-}
-
-export interface DataFolderNode {
-     id?: string
-     name: string
-     qrCode?: string
-     linkQr?: string
-     linkFile?: string
-     children?: DataFolderNode[]
-     code?: string
-     type?: string
-     isCat?: boolean
-     identify: string
-     has?: boolean
-     info?: DataMobilize
-     notEdit?: boolean
-}
-
-export interface PermissionInterface {
-     name: string
-     identify: string
-     has: number
-}
-
-export interface DataPermission {
-     [category: string]: DataFolderNode[]
-}
-
-export interface ListMsg {
-     row: number
+export interface ErrorMetadata {
+     type: ErrorType
+     code: HttpStatus
      message: string
 }
 
-export interface DataRow {
-     [key: string]: any
+export const ErrorCode = {
+     BAD_REQUEST: 400,
+     UNAUTHORIZED: 401,
+     FORBIDDEN: 403,
+     NOT_FOUND: 404,
+     CONFLICT: 409,
+     VALIDATION_ERROR: 422,
+     INTERNAL_ERROR: 500,
+     TOO_MANY_REQUESTS: 429,
+} as const
+
+export type ErrorCodeType = (typeof ErrorCode)[keyof typeof ErrorCode]
+
+export const ErrorMessages: Record<ErrorType, string> = {
+     [ErrorType.VALIDATION]: 'Validation failed',
+     [ErrorType.AUTHENTICATION]: 'Authentication failed',
+     [ErrorType.AUTHORIZATION]: 'You do not have permission',
+     [ErrorType.NOT_FOUND]: 'Resource not found',
+     [ErrorType.BAD_REQUEST]: 'Bad request',
+     [ErrorType.INTERNAL]: 'Internal server error',
+     [ErrorType.TOO_MANY_REQUESTS]: 'Too many request',
 }
 
-export interface DataMobilize {
-     divisionMobilize?: string
-     addressMobilize?: string
-     intendTime?: string
-     realTime?: string
-     status?: string
-     totalTime?: string
-     note?: string
+export type FileType = 'image' | 'xlsx' | 'docx' | 'mp4' | 'txt' | 'unknown'
+
+export enum UploadType {
+     IMAGE = 'image',
+     FILE = 'file',
 }

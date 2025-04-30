@@ -134,5 +134,8 @@ uploads
 *.uploads
 
 # queue
-queue
-*.queue
+queue-upload
+*.queue-upload
+
+.env.dev
+.env.prod

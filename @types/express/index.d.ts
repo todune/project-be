@@ -1,16 +1,9 @@
-import { RoleType } from "../../src/common/functions/checkToken"
-
 declare global {
      namespace Express {
           interface Request {
                user?: {
-                    userId: string,
-                    name: string,
-                    code: string
+                    userId: number
                }
-               roles?: string[],
-               role?: string,
-               perms?: RoleType
           }
      }
 }

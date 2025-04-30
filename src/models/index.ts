@@ -1,20 +1,19 @@
+import { readdirSync } from 'fs'
+import { join, basename as _basename } from 'path'
 
-export { default as Booking } from './booking'
+// Lấy path hiện tại (nơi index.ts đang nằm)
+const modelsPath = __dirname
 
-export { default as User } from './users'
-
-export { default as AdditionalService } from './additionalService'
-
-export { default as Equipment } from './equipment';
-
-export { default as Feedback } from './feedback'
-
-export { default as Notification } from './notification'
-
-export { default as UserWallet } from './userWallet'
-
-export { default as WalletTransaction } from './walletTransaction'
-export { default as Field } from './field'
-export { default as FoodBeverage } from './foodBeverage'
-
-
+// Đọc toàn bộ file model trong thư mục này
+readdirSync(modelsPath)
+     .filter((file) => {
+          const ext = file.slice(file.lastIndexOf('.') + 1)
+          return (
+               file !== _basename(__filename) && // không lấy file index.ts
+               (ext === 'ts' || ext === 'js') && // chỉ lấy ts/js file
+               file.includes('.model.') // chỉ lấy file model
+          )
+     })
+     .forEach((file) => {
+          require(join(modelsPath, file)) // import từng model
+     })

@@ -2,5 +2,9 @@
      "trailingComma": "es5",
      "tabWidth": 5,
      "semi": false,
-     "singleQuote": true
+     "singleQuote": true,
+     "arrowParens": "always",
+     "printWidth": 100,
+     "endOfLine": "lf",
+     "proseWrap": "preserve"
 }
