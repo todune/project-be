@@ -34,7 +34,7 @@ export class Application {
 
           await this.setup(app, server)
 
-          // await seeder()
+          await seeder()
 
           timeSlotCronJob()
 

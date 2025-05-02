@@ -6,6 +6,7 @@ import User from './user.model'
 
 export interface BookingInstance extends Model {
      id: number
+     code: string
      court_id: number
      time_slot_id: number
      user_id: number
@@ -24,6 +25,9 @@ const Booking = db.define<BookingInstance>(
                type: DataTypes.INTEGER,
                primaryKey: true,
                autoIncrement: true,
+          },
+          code: {
+               type: DataTypes.STRING,
           },
           court_id: {
                type: DataTypes.INTEGER,

@@ -1,5 +1,6 @@
 import PaginationRes from '@common/utils/paginationRes'
 import { sendJson } from '@common/utils/sendJson'
+import Booking from '@models/booking.model'
 import Transaction from '@models/transaction.model'
 import { Request, Response } from 'express'
 import { Op } from 'sequelize'
@@ -21,6 +22,13 @@ export const getTransactions = async (req: Request, res: Response) => {
      const queryOptions = {
           order: [['id', 'DESC']],
           where: whereCondition,
+          include: [
+               {
+                    model: Booking,
+                    as: 'bookingTransactionData',
+                    attributes: { exclude: 'config' },
+               },
+          ],
      }
 
      const pagination = new PaginationRes(Transaction, queryOptions, { page, limit })

@@ -44,6 +44,11 @@ const ServiceOrder = db.define<ServiceOrderInstance>(
      }
 )
 
+Booking.hasMany(ServiceOrder, {
+     as: 'serviceOrderData',
+     foreignKey: 'booking_id',
+     onDelete: 'CASCADE',
+})
 ServiceOrder.belongsTo(Booking, {
      as: 'bookingOrderData',
      foreignKey: 'booking_id',

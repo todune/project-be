@@ -3,6 +3,9 @@ import { sendJson } from '@common/utils/sendJson'
 import Booking from '@models/booking.model'
 import Category from '@models/category.model'
 import Court from '@models/court.model'
+import EquipmentItem from '@models/equipment.model'
+import FoodItem from '@models/food.model'
+import ServiceOrder from '@models/service-order.model'
 import TimeSlot from '@models/time-slot.model'
 import User from '@models/user.model'
 import { Request, Response } from 'express'
@@ -42,6 +45,20 @@ export const getBookings = async (req: Request, res: Response) => {
                          {
                               model: Category,
                               as: 'catCourtData',
+                         },
+                    ],
+               },
+               {
+                    model: ServiceOrder,
+                    as: 'serviceOrderData',
+                    include: [
+                         {
+                              model: FoodItem,
+                              as: 'foodOrderData',
+                         },
+                         {
+                              model: EquipmentItem,
+                              as: 'equipmentOrderData',
                          },
                     ],
                },
