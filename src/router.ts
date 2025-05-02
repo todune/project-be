@@ -11,10 +11,10 @@ import { getCategories } from '@services/categories/get'
 import { createCategory, createCategorySchema } from '@services/categories/create'
 import { updateCategory, updateCategorySchema } from '@services/categories/update'
 import { deleteCategory } from '@services/categories/delete'
-import { getSlots } from '@services/slots/get'
-import { createSlot, createSlotSchema } from '@services/slots/create'
-import { updateSlot, updateSlotSchema } from '@services/slots/update'
-import { deleteSlot } from '@services/slots/delete'
+import { getTimeSlots } from '@services/time-slots/get'
+import { createTimeSlot, createTimeSlotSchema } from '@services/time-slots/create'
+import { updateTimeSlot, updateTimeSlotSchema } from '@services/time-slots/update'
+import { deleteTimeSlot } from '@services/time-slots/delete'
 import { getFoodItems } from '@services/food-items/get'
 import { createFoodItem, createFoodItemSchema } from '@services/food-items/create'
 import { updateFoodItem, updateFoodItemSchema } from '@services/food-items/update'
@@ -35,6 +35,13 @@ import { getCourts } from '@services/courts/get'
 import { createCourt, createCourtSchema } from '@services/courts/create'
 import { updateCourt, updateCourtSchema } from '@services/courts/update'
 import { deleteCourt } from '@services/courts/delete'
+import { getCourtById } from '@services/courts/getById'
+import { createBooking, createBookingSchema } from '@services/bookings/create'
+import { confirmPayment } from '@services/bookings/confirm-payment'
+import { createTransaction, createTransactionSchema } from '@services/transactions/create'
+import { getTransactions } from '@services/transactions/get'
+import { getBookings } from '@services/bookings/get'
+import { getCourtsByCus } from '@services/courts/getByCus'
 
 const router = express.Router()
 
@@ -50,9 +57,22 @@ const apiRoutes = () => {
      // middlewares
      router.use(requestMiddleware)
 
-     // auth
+     // login
      router.post('/auth/login', validateMiddleware(loginSchema), login)
 
+     // get by customer
+     router.get('/courts/cus', getCourtsByCus)
+
+     // bookings
+     router.get('/bookings', getBookings)
+     router.post('/bookings', validateMiddleware(createBookingSchema), createBooking)
+     router.post('/bookings/:id/confirm-payment', confirmPayment)
+
+     // bookings
+     router.get('/transactions', getTransactions)
+     router.post('/transactions', validateMiddleware(createTransactionSchema), createTransaction)
+
+     // auth
      router.use(authenticateToken)
      router.get('/auth/me', getMe)
      router.post('/auth/logout', logout)
@@ -64,10 +84,10 @@ const apiRoutes = () => {
      router.delete('/categories/:id', deleteCategory)
 
      // slots
-     router.get('/slots', getSlots)
-     router.post('/slots', validateMiddleware(createSlotSchema), createSlot)
-     router.put('/slots/:id', validateMiddleware(updateSlotSchema), updateSlot)
-     router.delete('/slots/:id', deleteSlot)
+     router.get('/time-slots', getTimeSlots)
+     router.post('/time-slots', validateMiddleware(createTimeSlotSchema), createTimeSlot)
+     router.put('/time-slots/:id', validateMiddleware(updateTimeSlotSchema), updateTimeSlot)
+     router.delete('/time-slots/:id', deleteTimeSlot)
 
      // roles
      router.get('/roles', getRoles)
@@ -103,15 +123,10 @@ const apiRoutes = () => {
 
      // courts
      router.get('/courts', getCourts)
+     router.get('/courts/:id', getCourtById)
      router.post('/courts', validateMiddleware(createCourtSchema), createCourt)
      router.put('/courts/:id', validateMiddleware(updateCourtSchema), updateCourt)
      router.delete('/courts/:id', deleteCourt)
-
-     // schedules
-     router.get('/schedules', getCourts)
-     router.post('/schedules', validateMiddleware(createCourtSchema), createCourt)
-     router.put('/schedules/:id', validateMiddleware(updateCourtSchema), updateCourt)
-     router.delete('/schedules/:id', deleteCourt)
 
      return router
 }

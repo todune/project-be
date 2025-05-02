@@ -1,6 +1,6 @@
 import { ApiError } from '@common/errors/apiError'
 import { sendJson } from '@common/utils/sendJson'
-import Slot from '@models/slot.model'
+import Slot from '@models/time-slot.model'
 import { Request, Response } from 'express'
 
 export const deleteUser = async (req: Request, res: Response) => {

@@ -13,7 +13,8 @@ import path from 'path'
 import cors from 'cors'
 import 'dotenv/config'
 import { seeder } from '@configs/seeder'
-import '@models/index'
+import { timeSlotCronJob } from '@common/cron-jobs/timeSlotCronJob'
+// import '@models/index'
 
 export class Application {
      static async createApplication() {
@@ -34,6 +35,8 @@ export class Application {
           await this.setup(app, server)
 
           // await seeder()
+
+          timeSlotCronJob()
 
           this.handleExit(server)
 

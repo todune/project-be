@@ -1,10 +1,10 @@
 import PaginationRes from '@common/utils/paginationRes'
 import { sendJson } from '@common/utils/sendJson'
-import Slot from '@models/slot.model'
+import TimeSlot from '@models/time-slot.model'
 import { Request, Response } from 'express'
 import { Op } from 'sequelize'
 
-export const getSlots = async (req: Request, res: Response) => {
+export const getTimeSlots = async (req: Request, res: Response) => {
      const page = Math.max(1, parseInt(req.query.page as string) || 1)
      const limit = Math.max(1, parseInt(req.query.limit as string) || 10)
      const keyword = ((req.query.keyword as string) || '').trim()
@@ -23,7 +23,7 @@ export const getSlots = async (req: Request, res: Response) => {
           where: whereCondition,
      }
 
-     const pagination = new PaginationRes(Slot, queryOptions, { page, limit })
+     const pagination = new PaginationRes(TimeSlot, queryOptions, { page, limit })
      const data = await pagination.paginate()
 
      sendJson(res, data)

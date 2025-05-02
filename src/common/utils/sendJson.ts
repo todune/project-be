@@ -6,7 +6,7 @@ export const sendJson = (res: Response, data: any, message: string = 'Success') 
           statusCode: 200,
           success: true,
           message,
-          data: items,
-          pagination: rest,
+          data: data.id ? data : items,
+          pagination: data.id ? undefined : rest,
      })
 }

@@ -1,18 +1,17 @@
-import db from '@configs/db.config'
 import { DataTypes, Model } from 'sequelize'
+import TimeSlot from './time-slot.model'
+import db from '@configs/db.config'
 import Court from './court.model'
 import User from './user.model'
-import CourtSlot from './court-slot.model'
 
 export interface BookingInstance extends Model {
      id: number
      court_id: number
+     time_slot_id: number
      user_id: number
-     court_slot_id: number
-     booking_date: Date
-     price_at_booking: number
-     total_price: number
-     status: 'pending' | 'paid' | 'cancelled' | 'completed' | 'refunded'
+     price_at_booking: string
+     total_price: string
+     status: 'pending' | 'paid' | 'wait_payment' | 'refunded' | 'cancelled'
      created_at: Date
      updated_at: Date
      notes: string | null
@@ -34,12 +33,8 @@ const Booking = db.define<BookingInstance>(
                type: DataTypes.INTEGER,
                allowNull: false,
           },
-          court_slot_id: {
+          time_slot_id: {
                type: DataTypes.INTEGER,
-               allowNull: false,
-          },
-          booking_date: {
-               type: DataTypes.DATE,
                allowNull: false,
           },
           price_at_booking: {
@@ -51,7 +46,7 @@ const Booking = db.define<BookingInstance>(
                allowNull: false,
           },
           status: {
-               type: DataTypes.ENUM('pending', 'paid', 'cancelled', 'completed', 'refunded'),
+               type: DataTypes.ENUM('pending', 'paid', 'cancelled', 'wait_payment', 'refunded'),
                defaultValue: 'pending',
           },
           notes: {
@@ -68,9 +63,14 @@ const Booking = db.define<BookingInstance>(
 
 Booking.belongsTo(Court, { as: 'courtBookingData', foreignKey: 'court_id', onDelete: 'CASCADE' })
 Booking.belongsTo(User, { as: 'userBookingData', foreignKey: 'user_id', onDelete: 'CASCADE' })
-Booking.belongsTo(CourtSlot, {
-     as: 'courtSlotBookingData',
-     foreignKey: 'court_slot_id',
+TimeSlot.hasOne(Booking, {
+     as: 'bookingData',
+     foreignKey: 'time_slot_id',
+     onDelete: 'CASCADE',
+})
+Booking.belongsTo(TimeSlot, {
+     as: 'timeSlotBookingData',
+     foreignKey: 'time_slot_id',
      onDelete: 'CASCADE',
 })
 

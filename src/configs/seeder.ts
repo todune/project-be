@@ -7,7 +7,7 @@ import { hashPw } from '@common/utils/hashPw'
 import Category from '@models/category.model'
 import FoodItem from '@models/food.model'
 import EquipmentItem from '@models/equipment.model'
-import Slot from '@models/slot.model'
+import Slot from '@models/time-slot.model'
 import Court from '@models/court.model'
 
 export async function seeder() {
@@ -167,35 +167,35 @@ export async function seeder() {
           )
 
           // 6. slot
-          await Slot.bulkCreate(
-               [
-                    // Ca sáng
-                    { name: 'Ca sáng 1', start_time: '06:00:00', end_time: '09:00:00' },
-                    { name: 'Ca sáng 2', start_time: '09:00:00', end_time: '12:00:00' },
-                    { name: 'Ca sáng 3', start_time: '12:00:00', end_time: '15:00:00' },
+          // await Slot.bulkCreate(
+          //      [
+          //           // Ca sáng
+          //           { name: 'Ca sáng 1', start_time: '06:00:00', end_time: '09:00:00' },
+          //           { name: 'Ca sáng 2', start_time: '09:00:00', end_time: '12:00:00' },
+          //           { name: 'Ca sáng 3', start_time: '12:00:00', end_time: '15:00:00' },
 
-                    // Ca trưa
-                    { name: 'Ca trưa 1', start_time: '15:00:00', end_time: '18:00:00' },
-                    { name: 'Ca trưa 2', start_time: '18:00:00', end_time: '21:00:00' },
-                    { name: 'Ca trưa 3', start_time: '21:00:00', end_time: '00:00:00' },
+          //           // Ca trưa
+          //           { name: 'Ca trưa 1', start_time: '15:00:00', end_time: '18:00:00' },
+          //           { name: 'Ca trưa 2', start_time: '18:00:00', end_time: '21:00:00' },
+          //           { name: 'Ca trưa 3', start_time: '21:00:00', end_time: '00:00:00' },
 
-                    // Ca chiều
-                    { name: 'Ca chiều 1', start_time: '00:00:00', end_time: '03:00:00' },
-                    { name: 'Ca chiều 2', start_time: '03:00:00', end_time: '06:00:00' },
-                    { name: 'Ca chiều 3', start_time: '06:00:00', end_time: '09:00:00' },
+          //           // Ca chiều
+          //           { name: 'Ca chiều 1', start_time: '00:00:00', end_time: '03:00:00' },
+          //           { name: 'Ca chiều 2', start_time: '03:00:00', end_time: '06:00:00' },
+          //           { name: 'Ca chiều 3', start_time: '06:00:00', end_time: '09:00:00' },
 
-                    // Ca tối
-                    { name: 'Ca tối 1', start_time: '09:00:00', end_time: '12:00:00' },
-                    { name: 'Ca tối 2', start_time: '12:00:00', end_time: '15:00:00' },
-                    { name: 'Ca tối 3', start_time: '15:00:00', end_time: '18:00:00' },
+          //           // Ca tối
+          //           { name: 'Ca tối 1', start_time: '09:00:00', end_time: '12:00:00' },
+          //           { name: 'Ca tối 2', start_time: '12:00:00', end_time: '15:00:00' },
+          //           { name: 'Ca tối 3', start_time: '15:00:00', end_time: '18:00:00' },
 
-                    // Ca đêm
-                    { name: 'Ca đêm 1', start_time: '18:00:00', end_time: '21:00:00' },
-                    { name: 'Ca đêm 2', start_time: '21:00:00', end_time: '00:00:00' },
-                    { name: 'Ca đêm 3', start_time: '00:00:00', end_time: '03:00:00' },
-               ],
-               { transaction }
-          )
+          //           // Ca đêm
+          //           { name: 'Ca đêm 1', start_time: '18:00:00', end_time: '21:00:00' },
+          //           { name: 'Ca đêm 2', start_time: '21:00:00', end_time: '00:00:00' },
+          //           { name: 'Ca đêm 3', start_time: '00:00:00', end_time: '03:00:00' },
+          //      ],
+          //      { transaction }
+          // )
 
           // 7. court
           const categories = await Category.findAll({ where: { type: 'sport' }, transaction })

@@ -1,6 +1,6 @@
-import db from '@configs/db.config'
 import { DataTypes, Model } from 'sequelize'
 import Category from './category.model'
+import db from '@configs/db.config'
 
 export interface CourtInstance extends Model {
      id: number
@@ -8,6 +8,7 @@ export interface CourtInstance extends Model {
      code: string
      location: string
      category_id: number
+     config: any
 }
 
 const Court = db.define<CourtInstance>('Court', {
@@ -27,6 +28,10 @@ const Court = db.define<CourtInstance>('Court', {
      },
      category_id: {
           type: DataTypes.INTEGER,
+     },
+     config: {
+          type: DataTypes.JSONB,
+          defaultValue: {},
      },
 })
 
