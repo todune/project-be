@@ -12,7 +12,7 @@ export interface BookingInstance extends Model {
      user_id: number
      price_at_booking: string
      total_price: string
-     status: 'pending' | 'paid' | 'wait_payment' | 'refunded' | 'cancelled'
+     status: 'Mới' | 'Đã thanh toán' | 'Chờ thanh toán' | 'Hủy'
      created_at: Date
      updated_at: Date
      notes: string | null
@@ -50,8 +50,8 @@ const Booking = db.define<BookingInstance>(
                allowNull: false,
           },
           status: {
-               type: DataTypes.ENUM('pending', 'paid', 'cancelled', 'wait_payment', 'refunded'),
-               defaultValue: 'pending',
+               type: DataTypes.ENUM('Mới', 'Đã thanh toán', 'Hủy', 'Chờ thanh toán', 'refunded'),
+               defaultValue: 'Mới',
           },
           notes: {
                type: DataTypes.STRING(500),

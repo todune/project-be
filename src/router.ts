@@ -15,14 +15,6 @@ import { getTimeSlots } from '@services/time-slots/get'
 import { createTimeSlot, createTimeSlotSchema } from '@services/time-slots/create'
 import { updateTimeSlot, updateTimeSlotSchema } from '@services/time-slots/update'
 import { deleteTimeSlot } from '@services/time-slots/delete'
-import { getFoodItems } from '@services/food-items/get'
-import { createFoodItem, createFoodItemSchema } from '@services/food-items/create'
-import { updateFoodItem, updateFoodItemSchema } from '@services/food-items/update'
-import { deleteFoodItem } from '@services/food-items/delete'
-import { getEquipmentItems } from '@services/equipment-items/get'
-import { createEquipmentItem, createEquipmentItemSchema } from '@services/equipment-items/create'
-import { updateEquipmentItem, updateEquipmentItemSchema } from '@services/equipment-items/update'
-import { deleteEquipmentItem } from '@services/equipment-items/delete'
 import { getRoles } from '@services/roles/get'
 import { createRole, createRoleSchema } from '@services/roles/create'
 import { updateRole, updateRoleSchema } from '@services/roles/update'
@@ -42,6 +34,17 @@ import { createTransaction, createTransactionSchema } from '@services/transactio
 import { getTransactions } from '@services/transactions/get'
 import { getBookings } from '@services/bookings/get'
 import { getCourtsByCus } from '@services/courts/getByCus'
+import { getProducts } from '@services/products/get'
+import { createProduct, createProductSchema } from '@services/products/create'
+import { updateProduct, updateProductSchema } from '@services/products/update'
+import { deleteProduct } from '@services/products/delete'
+import { permMiddleware } from '@common/middleware/permisisonMiddleware'
+import { getPermissions } from '@services/permissions/get'
+import { setPermission, setPermissionSchema } from '@services/permissions/set-perm'
+import { getRevenueSummary } from '@services/reports/getRevenueSummary'
+import { getBookingStatus } from '@services/reports/getBookingStatus'
+import { getCourtPerformance } from '@services/reports/getCourtPerformance'
+import { getProductTopSelling } from '@services/reports/getProductTopSelling'
 
 const router = express.Router()
 
@@ -64,12 +67,10 @@ const apiRoutes = () => {
      router.get('/courts/cus', getCourtsByCus)
 
      // bookings
-     router.get('/bookings', getBookings)
      router.post('/bookings', validateMiddleware(createBookingSchema), createBooking)
      router.post('/bookings/:id/confirm-payment', confirmPayment)
 
      // bookings
-     router.get('/transactions', getTransactions)
      router.post('/transactions', validateMiddleware(createTransactionSchema), createTransaction)
 
      // auth
@@ -77,56 +78,127 @@ const apiRoutes = () => {
      router.get('/auth/me', getMe)
      router.post('/auth/logout', logout)
 
+     // transactions
+     router.get('/transactions', permMiddleware('Theo dõi giao dịch'), getTransactions)
+
+     // bookings
+     router.get('/bookings', permMiddleware('Theo dõi sân'), getBookings)
+
      // categories
-     router.get('/categories', getCategories)
-     router.post('/categories', validateMiddleware(createCategorySchema), createCategory)
-     router.put('/categories/:id', validateMiddleware(updateCategorySchema), updateCategory)
-     router.delete('/categories/:id', deleteCategory)
+     router.get('/categories', permMiddleware('Xem danh mục'), getCategories)
+     router.post(
+          '/categories',
+          permMiddleware('Thêm danh mục'),
+          validateMiddleware(createCategorySchema),
+          createCategory
+     )
+     router.put(
+          '/categories/:id',
+          permMiddleware('Sửa danh mục'),
+          validateMiddleware(updateCategorySchema),
+          updateCategory
+     )
+     router.delete('/categories/:id', permMiddleware('Xóa danh mục'), deleteCategory)
 
      // slots
      router.get('/time-slots', getTimeSlots)
-     router.post('/time-slots', validateMiddleware(createTimeSlotSchema), createTimeSlot)
-     router.put('/time-slots/:id', validateMiddleware(updateTimeSlotSchema), updateTimeSlot)
+     router.post(
+          '/time-slots',
+          permMiddleware('Tạo lịch'),
+          validateMiddleware(createTimeSlotSchema),
+          createTimeSlot
+     )
+     router.put(
+          '/time-slots/:id',
+          permMiddleware('Tạo lịch'),
+          validateMiddleware(updateTimeSlotSchema),
+          updateTimeSlot
+     )
      router.delete('/time-slots/:id', deleteTimeSlot)
 
      // roles
-     router.get('/roles', getRoles)
-     router.post('/roles', validateMiddleware(createRoleSchema), createRole)
-     router.put('/roles/:id', validateMiddleware(updateRoleSchema), updateRole)
-     router.delete('/roles/:id', deleteRole)
-
-     // food items
-     router.get('/food-items', getFoodItems)
-     router.post('/food-items', validateMiddleware(createFoodItemSchema), createFoodItem)
-     router.put('/food-items/:id', validateMiddleware(updateFoodItemSchema), updateFoodItem)
-     router.delete('/food-items/:id', deleteFoodItem)
-
-     // equipment items
-     router.get('/equipment-items', getEquipmentItems)
+     router.get('/roles', permMiddleware('Phân quyền'), getRoles)
      router.post(
-          '/equipment-items',
-          validateMiddleware(createEquipmentItemSchema),
-          createEquipmentItem
+          '/roles',
+          permMiddleware('Phân quyền'),
+          validateMiddleware(createRoleSchema),
+          createRole
      )
      router.put(
-          '/equipment-items/:id',
-          validateMiddleware(updateEquipmentItemSchema),
-          updateEquipmentItem
+          '/roles/:id',
+          permMiddleware('Phân quyền'),
+          validateMiddleware(updateRoleSchema),
+          updateRole
      )
-     router.delete('/equipment-items/:id', deleteEquipmentItem)
+     router.delete('/roles/:id', permMiddleware('Phân quyền'), deleteRole)
+
+     // products
+     router.get('/products', permMiddleware('Xem sản phẩm'), getProducts)
+     router.post(
+          '/products',
+          permMiddleware('Thêm sản phẩm'),
+          validateMiddleware(createProductSchema),
+          createProduct
+     )
+     router.put(
+          '/products/:id',
+          permMiddleware('Sửa sản phẩm'),
+          validateMiddleware(updateProductSchema),
+          updateProduct
+     )
+     router.delete('/products/:id', permMiddleware('Xóa sản phẩm'), deleteProduct)
 
      // users
-     router.get('/users', getUsers)
-     router.post('/users', validateMiddleware(createUserSchema), createUser)
-     router.put('/users/:id', validateMiddleware(updateUserSchema), updateUser)
-     router.delete('/users/:id', deleteUser)
+     router.get('/users', permMiddleware('Xem người dùng'), getUsers)
+     router.post(
+          '/users',
+          permMiddleware('Thêm người dùng'),
+          validateMiddleware(createUserSchema),
+          createUser
+     )
+     router.put(
+          '/users/:id',
+          permMiddleware('Sửa người dùng'),
+          validateMiddleware(updateUserSchema),
+          updateUser
+     )
+     router.delete('/users/:id', permMiddleware('Xóa người dùng'), deleteUser)
 
      // courts
-     router.get('/courts', getCourts)
-     router.get('/courts/:id', getCourtById)
-     router.post('/courts', validateMiddleware(createCourtSchema), createCourt)
-     router.put('/courts/:id', validateMiddleware(updateCourtSchema), updateCourt)
-     router.delete('/courts/:id', deleteCourt)
+     router.get('/courts', permMiddleware('Xem sân'), getCourts)
+     router.get('/courts/:id', permMiddleware('Xem sân'), getCourtById)
+     router.post(
+          '/courts',
+          permMiddleware('Thêm sân'),
+          validateMiddleware(createCourtSchema),
+          createCourt
+     )
+     router.put(
+          '/courts/:id',
+          permMiddleware('Sửa sân'),
+          validateMiddleware(updateCourtSchema),
+          updateCourt
+     )
+     router.delete('/courts/:id', permMiddleware('Xóa sân'), deleteCourt)
+
+     // permissions
+     router.get('/permissions/:id', permMiddleware('Phân quyền'), getPermissions)
+     router.post(
+          '/permissions',
+          permMiddleware('Phân quyền'),
+          validateMiddleware(setPermissionSchema),
+          setPermission
+     )
+
+     // reports
+     router.get('/reports/revenue/summary', permMiddleware('Xem báo cáo'), getRevenueSummary)
+     router.get('/reports/bookings/status', permMiddleware('Xem báo cáo'), getBookingStatus)
+     router.get('/reports/courts/performance', permMiddleware('Xem báo cáo'), getCourtPerformance)
+     router.get(
+          '/reports/products/top-selling',
+          permMiddleware('Xem báo cáo'),
+          getProductTopSelling
+     )
 
      return router
 }

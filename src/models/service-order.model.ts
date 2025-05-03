@@ -1,14 +1,12 @@
 import db from '@configs/db.config'
 import { DataTypes, Model } from 'sequelize'
 import Booking from './booking.model'
-import FoodItem from './food.model'
-import EquipmentItem from './equipment.model'
+import Product from './product.model'
 
 export interface ServiceOrderInstance extends Model {
      id: number
      booking_id: number
-     equipment_item_id: number
-     food_item_id: number
+     product_id: number
      quantity: number
      price: number
 }
@@ -24,10 +22,7 @@ const ServiceOrder = db.define<ServiceOrderInstance>(
           booking_id: {
                type: DataTypes.INTEGER,
           },
-          food_item_id: {
-               type: DataTypes.INTEGER,
-          },
-          equipment_item_id: {
+          product_id: {
                type: DataTypes.INTEGER,
           },
           quantity: {
@@ -54,19 +49,10 @@ ServiceOrder.belongsTo(Booking, {
      foreignKey: 'booking_id',
      onDelete: 'CASCADE',
 })
-
-ServiceOrder.belongsTo(FoodItem, {
-     as: 'foodOrderData',
-     foreignKey: 'food_item_id',
+ServiceOrder.belongsTo(Product, {
+     as: 'productData',
+     foreignKey: 'product_id',
      onDelete: 'CASCADE',
-     constraints: false,
-})
-
-ServiceOrder.belongsTo(EquipmentItem, {
-     as: 'equipmentOrderData',
-     foreignKey: 'equipment_item_id',
-     onDelete: 'CASCADE',
-     constraints: false,
 })
 
 export default ServiceOrder

@@ -30,13 +30,13 @@ export function timeSlotCronJob() {
                     const bookingsForSlot = await Booking.findAll({
                          where: {
                               time_slot_id: timeSlot.id,
-                              status: 'wait_payment',
+                              status: 'Chờ thanh toán',
                          },
                          transaction,
                     })
 
                     for (const booking of bookingsForSlot) {
-                         await booking.update({ status: 'cancelled' }, { transaction })
+                         await booking.update({ status: 'Hủy' }, { transaction })
                          console.log(
                               `Booking ID ${booking.id} has been unlocked for TimeSlot ID ${timeSlot.id}`
                          )

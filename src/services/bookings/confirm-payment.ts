@@ -44,7 +44,7 @@ export const confirmPayment = async (req: Request, res: Response) => {
           console.log(booking.id)
 
           // 3. booking is paid
-          if (booking.status === 'paid') {
+          if (booking.status === 'Đã thanh toán') {
                await transaction.commit()
                sendJson(res, booking, 'Sân này đã được thanh toán trước đó')
                return
@@ -87,7 +87,7 @@ export const confirmPayment = async (req: Request, res: Response) => {
           )
 
           // 5. update booking to wait payment
-          await booking.update({ status: 'wait_payment' }, { transaction })
+          await booking.update({ status: 'Chờ thanh toán' }, { transaction })
 
           await transaction.commit()
           sendJson(

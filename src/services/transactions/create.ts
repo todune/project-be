@@ -43,11 +43,11 @@ export const createTransaction = async (req: Request, res: Response) => {
                transaction,
           })
           if (!booking) throw new ApiError('Khung giờ đặt không tồn tại', 404)
-          if (booking.status !== 'wait_payment')
+          if (booking.status !== 'Chờ thanh toán')
                throw new ApiError('Trạng thái booking không hợp lệ', 400)
 
           // 3. update booking is paid
-          await booking.update({ status: 'paid' }, { transaction })
+          await booking.update({ status: 'Đã thanh toán' }, { transaction })
 
           // 4. update time slot is booked
           await TimeSlot.update(

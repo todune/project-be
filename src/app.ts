@@ -14,7 +14,7 @@ import cors from 'cors'
 import 'dotenv/config'
 import { seeder } from '@configs/seeder'
 import { timeSlotCronJob } from '@common/cron-jobs/timeSlotCronJob'
-// import '@models/index'
+import '@models/index'
 
 export class Application {
      static async createApplication() {

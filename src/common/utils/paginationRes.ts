@@ -6,10 +6,12 @@ interface PaginationOptions {
 }
 
 interface PaginationResult<T> {
-     totalRecords: number
-     totalPages: number
-     currentPage: number
-     size: number
+     pagination: {
+          totalRecords: number
+          totalPages: number
+          currentPage: number
+          size: number
+     }
      items: T[]
 }
 
@@ -41,10 +43,12 @@ class PaginationRes<T> {
           const totalPages = Math.ceil(count / limit)
 
           return {
-               totalRecords: count || 0,
-               totalPages: totalPages || 0,
-               currentPage: page || 1,
-               size: limit,
+               pagination: {
+                    totalRecords: count || 0,
+                    totalPages: totalPages || 0,
+                    currentPage: page || 1,
+                    size: limit,
+               },
                items: (rows as T[]) || [],
           }
      }

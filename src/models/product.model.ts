@@ -2,9 +2,10 @@ import db from '@configs/db.config'
 import { DataTypes, Model } from 'sequelize'
 import Category from './category.model'
 
-export interface EquipmentItemInstance extends Model {
+export interface ProductInstance extends Model {
      id: number
      name: string
+     type: string
      description?: string
      price: number
      quantity: number
@@ -14,8 +15,8 @@ export interface EquipmentItemInstance extends Model {
      category_id: number
 }
 
-const EquipmentItem = db.define<EquipmentItemInstance>(
-     'EquipmentItem',
+const Product = db.define<ProductInstance>(
+     'Product',
      {
           id: {
                type: DataTypes.INTEGER,
@@ -26,6 +27,10 @@ const EquipmentItem = db.define<EquipmentItemInstance>(
                type: DataTypes.STRING(100),
                allowNull: false,
           },
+          type: {
+               type: DataTypes.STRING(100),
+               allowNull: false,
+          },
           description: {
                type: DataTypes.STRING(255),
           },
@@ -33,12 +38,12 @@ const EquipmentItem = db.define<EquipmentItemInstance>(
                type: DataTypes.DECIMAL(10, 2),
                allowNull: false,
           },
-          image_url: {
-               type: DataTypes.STRING(255),
-          },
           quantity: {
                type: DataTypes.INTEGER,
                defaultValue: 0,
+          },
+          image_url: {
+               type: DataTypes.STRING(255),
           },
           category_id: {
                type: DataTypes.INTEGER,
@@ -51,10 +56,6 @@ const EquipmentItem = db.define<EquipmentItemInstance>(
      }
 )
 
-EquipmentItem.belongsTo(Category, {
-     as: 'catEquipmentData',
-     foreignKey: 'category_id',
-     onDelete: 'CASCADE',
-})
+Product.belongsTo(Category, { as: 'catProductData', foreignKey: 'category_id', onDelete: 'CASCADE' })
 
-export default EquipmentItem
+export default Product

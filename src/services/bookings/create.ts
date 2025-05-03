@@ -1,11 +1,10 @@
 import ServiceOrder from '@models/service-order.model'
-import EquipmentItem from '@models/equipment.model'
 import { ApiError } from '@common/errors/apiError'
 import { sendJson } from '@common/utils/sendJson'
 import TimeSlot from '@models/time-slot.model'
 import Booking from '@models/booking.model'
 import { Request, Response } from 'express'
-import FoodItem from '@models/food.model'
+import Product from '@models/product.model'
 import User from '@models/user.model'
 import Role from '@models/role.model'
 import db from '@configs/db.config'
@@ -27,7 +26,6 @@ export const createBookingSchema = z
           full_name: z.string().min(1, 'Tên không được để trống').optional(),
           phone_number: z.string().min(10, 'Số điện thoại không hợp lệ').optional(),
           email: z.string().email('Email không hợp lệ').optional(),
-          // price_at_booking và total_price sẽ được tính toán trên server, không nhận từ client // price_at_booking: z.number({ required_error: 'Giá tại thời điểm đặt không được để trống' }), // total_price: z.number({ required_error: 'Tổng tiền không được để trống' }),
 
           time_slot_id: z
                .number({ required_error: 'Khung giờ đặt không được để trống' })
@@ -39,15 +37,10 @@ export const createBookingSchema = z
           service_orders: z
                .array(
                     z.object({
-                         food_item_id: z
+                         product_id: z
                               .number()
                               .int()
-                              .positive('ID món ăn phải là số nguyên dương')
-                              .optional(),
-                         equipment_item_id: z
-                              .number()
-                              .int()
-                              .positive('ID vật phẩm phải là số nguyên dương')
+                              .positive('ID sản phẩm phải là số nguyên dương')
                               .optional(),
                          quantity: z
                               .number({ required_error: 'Số lượng không được để trống' })
@@ -68,28 +61,6 @@ export const createBookingSchema = z
           {
                message: 'Thông tin người dùng (tên, số điện thoại, email) là bắt buộc nếu không cung cấp ID người dùng',
                path: ['user_id'], // Gắn lỗi vào trường user_id
-          }
-     )
-     .refine(
-          (data) => {
-               // Custom validation: cho service orders, mỗi mục phải có chính xác 1 trong 2 item_id
-               if (data.service_orders) {
-                    for (const order of data.service_orders) {
-                         const hasFoodItem = order.food_item_id !== undefined
-                         const hasEquipmentItem = order.equipment_item_id !== undefined
-                         if (
-                              (hasFoodItem && hasEquipmentItem) ||
-                              (!hasFoodItem && !hasEquipmentItem)
-                         ) {
-                              return false // Có cả hai hoặc không có cái nào
-                         }
-                    }
-               }
-               return true
-          },
-          {
-               message: 'Mỗi mục đặt dịch vụ phải có chính xác một trong hai: food_item_id hoặc equipment_item_id',
-               path: ['service_orders'], // Gắn lỗi vào trường service_orders
           }
      )
 
@@ -160,38 +131,20 @@ export const createBooking = async (req: Request, res: Response) => {
                for (const order of service_orders) {
                     let itemPrice = 0
                     let itemId = null
-                    let itemModel: 'FoodItem' | 'EquipmentItem' | null = null
 
-                    if (order.food_item_id) {
-                         const foodItem = await FoodItem.findByPk(order.food_item_id, {
+                    if (order.product_id) {
+                         const productItem = await Product.findByPk(order.product_id, {
                               transaction,
                          })
-                         if (!foodItem) {
+                         if (!productItem) {
                               throw new ApiError(
-                                   `Món ăn với ID ${order.food_item_id} không tồn tại`,
+                                   `Món ăn với ID ${order.product_id} không tồn tại`,
                                    404
                               )
                          }
-                         itemPrice = parseFloat(foodItem.price.toString())
-                         itemId = foodItem.id
-                         itemModel = 'FoodItem'
-                    } else if (order.equipment_item_id) {
-                         const equipmentItem = await EquipmentItem.findByPk(
-                              order.equipment_item_id,
-                              { transaction }
-                         )
-                         if (!equipmentItem) {
-                              throw new ApiError(
-                                   `Vật phẩm với ID ${order.equipment_item_id} không tồn tại`,
-                                   404
-                              )
-                         }
-                         // TODO: Kiểm tra số lượng tồn kho nếu cần
-                         itemPrice = parseFloat(equipmentItem.price.toString())
-                         itemId = equipmentItem.id
-                         itemModel = 'EquipmentItem'
+                         itemPrice = parseFloat(productItem.price.toString())
+                         itemId = productItem.id
                     } else {
-                         // Trường hợp này không xảy ra nếu Zod validation hoạt động đúng, nhưng thêm để an toàn
                          throw new ApiError('Mục đặt dịch vụ không hợp lệ', 400)
                     }
 
@@ -201,8 +154,7 @@ export const createBooking = async (req: Request, res: Response) => {
                     // Tạo bản ghi ServiceOrder
                     const newServiceOrder = await ServiceOrder.create(
                          {
-                              food_item_id: itemModel === 'FoodItem' ? itemId : null,
-                              equipment_item_id: itemModel === 'EquipmentItem' ? itemId : null,
+                              product_id: itemId,
                               quantity: order.quantity,
                               price: orderPrice, // Giá cho mục dịch vụ này (số lượng * đơn giá)
                          },
@@ -221,7 +173,7 @@ export const createBooking = async (req: Request, res: Response) => {
                     time_slot_id,
                     price_at_booking: isTimeSlotExist.price, // Giá sân đã tính
                     total_price: totalPrice, // Tổng tiền (sân + dịch vụ)
-                    status: 'pending',
+                    status: 'Mới',
                     notes,
                },
                { transaction }
