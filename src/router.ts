@@ -45,6 +45,11 @@ import { getRevenueSummary } from '@services/reports/getRevenueSummary'
 import { getBookingStatus } from '@services/reports/getBookingStatus'
 import { getCourtPerformance } from '@services/reports/getCourtPerformance'
 import { getProductTopSelling } from '@services/reports/getProductTopSelling'
+import { changePass, changePassSchema } from '@services/users/change-pass'
+import { getTimeSlotById } from '@services/time-slots/getById'
+import { getBookingById } from '@services/bookings/getById'
+import { getSportCenterById } from '@services/sport-centers/get'
+import { updateSportCenter, updateSportCenterSchema } from '@services/sport-centers/update'
 
 const router = express.Router()
 
@@ -66,9 +71,13 @@ const apiRoutes = () => {
      // get by customer
      router.get('/courts/cus', getCourtsByCus)
 
+     router.get('/sport-centers/:id', getSportCenterById)
+
      // bookings
      router.post('/bookings', validateMiddleware(createBookingSchema), createBooking)
      router.post('/bookings/:id/confirm-payment', confirmPayment)
+     router.get('/courts/:id', getCourtById)
+     router.get('/time-slots/:id', getTimeSlotById)
 
      // bookings
      router.post('/transactions', validateMiddleware(createTransactionSchema), createTransaction)
@@ -78,11 +87,20 @@ const apiRoutes = () => {
      router.get('/auth/me', getMe)
      router.post('/auth/logout', logout)
 
+     // sport center
+     router.put(
+          '/sport-centers/:id',
+          permMiddleware('Cập nhật thông tin'),
+          validateMiddleware(updateSportCenterSchema),
+          updateSportCenter
+     )
+
      // transactions
      router.get('/transactions', permMiddleware('Theo dõi giao dịch'), getTransactions)
 
      // bookings
      router.get('/bookings', permMiddleware('Theo dõi sân'), getBookings)
+     router.get('/bookings/:id', permMiddleware('Theo dõi sân'), getBookingById)
 
      // categories
      router.get('/categories', permMiddleware('Xem danh mục'), getCategories)
@@ -156,6 +174,7 @@ const apiRoutes = () => {
           validateMiddleware(createUserSchema),
           createUser
      )
+     router.post('/users/change-pass', validateMiddleware(changePassSchema), changePass)
      router.put(
           '/users/:id',
           permMiddleware('Sửa người dùng'),
@@ -166,7 +185,6 @@ const apiRoutes = () => {
 
      // courts
      router.get('/courts', permMiddleware('Xem sân'), getCourts)
-     router.get('/courts/:id', permMiddleware('Xem sân'), getCourtById)
      router.post(
           '/courts',
           permMiddleware('Thêm sân'),

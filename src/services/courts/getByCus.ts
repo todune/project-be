@@ -6,14 +6,14 @@ import Category from '@models/category.model'
 import { Request, Response } from 'express'
 import Court from '@models/court.model'
 import moment from 'moment-timezone'
-import { Op } from 'sequelize'
+import { Op, or } from 'sequelize'
 
 export const getCourtsByCus = async (req: Request, res: Response) => {
      const page = Math.max(1, parseInt(req.query.page as string) || 1)
      const limit = Math.max(1, parseInt(req.query.limit as string) || 10)
      const keyword = ((req.query.keyword as string) || '').trim()
-     const categoryId = Number(req.query.category_id)
-     const rawDate = (req.query.date as string) || ''
+     const categoryId = Number(req.query.categoryId)
+     const rawDate = (req.query.rawDate as string) || ''
 
      if (rawDate && !moment.utc(rawDate, 'YYYY-MM-DD', true).isValid()) {
           throw new ApiError('Ngày lọc không hợp lệ (yyyy-mm-dd)', 400)

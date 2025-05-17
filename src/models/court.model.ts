@@ -7,6 +7,8 @@ export interface CourtInstance extends Model {
      name: string
      code: string
      location: string
+     image_url?: string
+     description?: string
      category_id: number
      config: any
 }
@@ -32,6 +34,12 @@ const Court = db.define<CourtInstance>('Court', {
      config: {
           type: DataTypes.JSONB,
           defaultValue: {},
+     },
+     image_url: {
+          type: DataTypes.STRING,
+     },
+     description: {
+          type: DataTypes.STRING,
      },
 })
 

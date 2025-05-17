@@ -33,7 +33,7 @@ export const uploadFileMiddleware = (type: UploadType) => {
                     // )}${path.extname(file.originalname)}`
                     let fileName = Buffer.from(file.originalname, 'latin1').toString('utf8')
                     const now = Date.now()
-                    cb(null, `${now}${fileName}`)
+                    cb(null, `${now}.${fileName}`)
                },
           })
 

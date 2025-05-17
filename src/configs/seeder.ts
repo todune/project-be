@@ -50,6 +50,7 @@ export async function seeder() {
                     { name: 'Theo dõi giao dịch', type: 'Hệ thống' },
                     { name: 'Phân quyền', type: 'Hệ thống' },
                     { name: 'Xem báo cáo', type: 'Hệ thống' },
+                    { name: 'Cập nhật thông tin', type: 'Hệ thống' },
                ],
                {
                     transaction,
@@ -108,9 +109,9 @@ export async function seeder() {
                     { name: 'Sân golf', type: 'Thể thao' },
                     { name: 'Sân bóng bàn', type: 'Thể thao' },
                     { name: 'Sân bơi lội', type: 'Thể thao' },
-                    { name: 'Đồ uống', type: 'Đồ uống' },
-                    { name: 'Đồ ăn nhanh', type: 'Đồ ăn nhanh' },
-                    { name: 'Thiết bị thể thao', type: 'Trang thiết bị' },
+                    { name: 'Đồ uống', type: 'Sản phẩm' },
+                    { name: 'Đồ ăn nhanh', type: 'Sản phẩm' },
+                    { name: 'Thiết bị thể thao', type: 'Sản phẩm' },
                ],
                { transaction }
           )

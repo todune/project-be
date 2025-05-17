@@ -17,7 +17,7 @@ export const createProductSchema = z.object({
 export type CreateProductInput = z.infer<typeof createProductSchema>
 
 export const createProduct = async (req: Request, res: Response) => {
-     const { name, description, price, quantity, image_url, category_id } =
+     const { name, ...rest } =
           req.body as CreateProductInput
 
      const isExist = await Product.findOne({ where: { name }, attributes: ['id'] })
@@ -25,11 +25,7 @@ export const createProduct = async (req: Request, res: Response) => {
 
      const data = await Product.create({
           name,
-          description,
-          price,
-          quantity,
-          image_url,
-          category_id,
+          ...rest,
      })
 
      sendJson(res, { id: data.dataValues.id }, 'Tạo sản phẩm thành công')

@@ -9,6 +9,7 @@ export const getCourts = async (req: Request, res: Response) => {
      const page = Math.max(1, parseInt(req.query.page as string) || 1)
      const limit = Math.max(1, parseInt(req.query.limit as string) || 10)
      const keyword = ((req.query.keyword as string) || '').trim()
+     const categoryId = req.query.categoryId as string
 
      const keywordArray = keyword.split(/\s+/).filter((word) => word.length > 0)
      const whereCondition: any = {}
@@ -18,6 +19,10 @@ export const getCourts = async (req: Request, res: Response) => {
                name: { [Op.iLike]: `%${term}%` },
                location: { [Op.iLike]: `%${term}%` },
           }))
+     }
+
+     if (categoryId && Number(categoryId)) {
+          whereCondition.category_id = Number(categoryId)
      }
 
      const queryOptions = {

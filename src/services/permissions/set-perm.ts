@@ -8,8 +8,8 @@ import { z } from 'zod'
 
 export const setPermissionSchema = z.object({
      role_id: z.number({ required_error: 'role_id không được để trống' }),
-     add: z.array(z.number()).optional().default([]),
-     remove: z.array(z.number()).optional().default([]),
+     list: z.array(z.number()).optional().default([]),
+     // remove: z.array(z.number()).optional().default([]),
 })
 
 export type setPermissionInput = z.infer<typeof setPermissionSchema>
@@ -17,21 +17,29 @@ export type setPermissionInput = z.infer<typeof setPermissionSchema>
 export const setPermission = async (req: Request, res: Response) => {
      const transaction = await db.transaction()
      try {
-          const { role_id, add, remove } = req.body as setPermissionInput
+          const { role_id, list } = req.body as setPermissionInput
 
           const roleExist = await Role.findByPk(role_id)
           if (!roleExist) throw new ApiError('Vai trò không tồn tại', 404)
 
-          for (const item of add) {
-               await RolePermission.create({ role_id, permission_id: item }, { transaction })
+          for (const item of list) {
+               const isExist = await RolePermission.findOne({
+                    where: {
+                         role_id,
+                         permission_id: item,
+                    },
+               })
+               if (!isExist) {
+                    await RolePermission.create({ role_id, permission_id: item }, { transaction })
+               }
           }
 
-          for (const item of remove) {
-               await RolePermission.destroy({
-                    where: { role_id, permission_id: item },
-                    transaction,
-               })
-          }
+          // for (const item of remove) {
+          //      await RolePermission.destroy({
+          //           where: { role_id, permission_id: item },
+          //           transaction,
+          //      })
+          // }
 
           await transaction.commit()
 

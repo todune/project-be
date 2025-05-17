@@ -13,12 +13,15 @@ export const getProducts = async (req: Request, res: Response) => {
 
      const keywordArray = keyword.split(/\s+/).filter((word) => word.length > 0)
      const whereCondition: any = {}
+     const whereCount: any = {}
 
      if (keywordArray.length > 0) {
-          whereCondition[Op.and] = keywordArray.map((term) => ({
+          const keywordFilter = keywordArray.map((term) => ({
                name: { [Op.iLike]: `%${term}%` },
                description: { [Op.iLike]: `%${term}%` },
           }))
+          whereCondition[Op.and] = keywordFilter
+          whereCount[Op.and] = keywordFilter
      }
 
      if (type !== 'Tất cả') {
@@ -36,7 +39,7 @@ export const getProducts = async (req: Request, res: Response) => {
 
      const typeCounts = await Product.findAll({
           attributes: ['type', [fn('COUNT', col('type')), 'count']],
-          where: whereCondition,
+          where: whereCount,
           group: ['type'],
      })
 
@@ -50,7 +53,7 @@ export const getProducts = async (req: Request, res: Response) => {
           const typeName = item.type || 'unknown'
           const count = parseInt(item.dataValues.count)
           menu[typeName] = count
-          menu.all += count
+          menu['Tất cả'] += count
      }
 
      sendJson(res, { menu, data })

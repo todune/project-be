@@ -9,6 +9,8 @@ export const updateCourtSchema = z.object({
      code: z.string().nullable().optional(),
      location: z.string().nullable().optional(),
      category_id: z.number().nullable().optional(),
+     image_url: z.string().optional().nullable(),
+     description: z.string().optional().nullable(),
 })
 
 export type UpdateCourtInput = z.infer<typeof updateCourtSchema>

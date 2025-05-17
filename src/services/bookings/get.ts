@@ -18,11 +18,16 @@ export const getBookings = async (req: Request, res: Response) => {
 
      const keywordArray = keyword.split(/\s+/).filter((word) => word.length > 0)
      const whereCondition: any = {}
+     const whereForCount: any = {}
 
      if (keywordArray.length > 0) {
-          whereCondition[Op.and] = keywordArray.map((term) => ({
-               name: { [Op.iLike]: `%${term}%` },
-          }))
+          const keywordFilter = {
+               [Op.and]: keywordArray.map((term) => ({
+                    name: { [Op.iLike]: `%${term}%` },
+               })),
+          }
+          whereCondition[Op.and] = keywordFilter[Op.and]
+          whereForCount[Op.and] = keywordFilter[Op.and]
      }
 
      if (status !== 'Tất cả') {
@@ -72,7 +77,7 @@ export const getBookings = async (req: Request, res: Response) => {
 
      const typeCounts = await Booking.findAll({
           attributes: ['status', [fn('COUNT', col('status')), 'count']],
-          where: whereCondition,
+          where: whereForCount,
           group: ['status'],
      })
 
@@ -88,7 +93,7 @@ export const getBookings = async (req: Request, res: Response) => {
           const typeName = item.status || 'unknown'
           const count = parseInt(item.dataValues.count)
           menu[typeName] = count
-          menu.all += count
+          menu['Tất cả'] += count
      }
      sendJson(res, { menu, data })
 }

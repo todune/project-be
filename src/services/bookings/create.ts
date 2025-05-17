@@ -102,7 +102,7 @@ export const createBooking = async (req: Request, res: Response) => {
                if (existingGuestUser) {
                     userId = existingGuestUser.id
                } else {
-                    const role = await Role.findOne({ where: { name: 'user' }, transaction })
+                    const role = await Role.findOne({ where: { name: 'Người dùng' }, transaction })
                     if (!role)
                          throw new ApiError('Vai trò khách hàng không tồn tại trong hệ thống', 404)
                     const guestUser = await User.create(
@@ -186,7 +186,11 @@ export const createBooking = async (req: Request, res: Response) => {
 
           await transaction.commit()
 
-          sendJson(res, { id: newBooking.id }, 'Đặt sân thành công. Vui lòng hoàn tất thanh toán.')
+          sendJson(
+               res,
+               { id: newBooking.time_slot_id, user_id: userId },
+               'Đặt sân thành công. Vui lòng hoàn tất thanh toán.'
+          )
      } catch (e) {
           await transaction.rollback()
           throw e

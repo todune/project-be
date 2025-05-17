@@ -8,7 +8,7 @@ export const getCategories = async (req: Request, res: Response) => {
      const page = Math.max(1, parseInt(req.query.page as string) || 1)
      const limit = Math.max(1, parseInt(req.query.limit as string) || 10)
      const keyword = ((req.query.keyword as string) || '').trim()
-     const type = (req.query.type as string) || 'all'
+     const type = (req.query.type as string) || 'Tất cả'
 
      const keywordArray = keyword.split(/\s+/).filter((word) => word.length > 0)
      const whereCondition: any = {}
@@ -17,6 +17,10 @@ export const getCategories = async (req: Request, res: Response) => {
           whereCondition[Op.and] = keywordArray.map((term) => ({
                name: { [Op.iLike]: `%${term}%` },
           }))
+     }
+
+     if (type !== 'Tất cả') {
+          whereCondition.type = type
      }
 
      const queryOptions = {
