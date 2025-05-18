@@ -9,6 +9,7 @@ import Product from '@models/product.model'
 import Court from '@models/court.model'
 import Permission from '@models/permission.model'
 import RolePermission from '@models/role-permission.model'
+import SportCenter from '@models/sport-center.model'
 
 export async function seeder() {
      await db.sync({ force: true })
@@ -22,6 +23,8 @@ export async function seeder() {
                     transaction,
                }
           )
+
+          await SportCenter.create({name: "Sport Center", address: "123 Đường ABC", image_url: "/images/sport_center.png", description: "asdnasuidhi3"}, { transaction })
 
           await Permission.bulkCreate(
                [
