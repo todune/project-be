@@ -41,15 +41,18 @@ import { deleteProduct } from '@services/products/delete'
 import { permMiddleware } from '@common/middleware/permisisonMiddleware'
 import { getPermissions } from '@services/permissions/get'
 import { setPermission, setPermissionSchema } from '@services/permissions/set-perm'
-import { getRevenueSummary } from '@services/reports/getRevenueSummary'
-import { getBookingStatus } from '@services/reports/getBookingStatus'
-import { getCourtPerformance } from '@services/reports/getCourtPerformance'
-import { getProductTopSelling } from '@services/reports/getProductTopSelling'
 import { changePass, changePassSchema } from '@services/users/change-pass'
 import { getTimeSlotById } from '@services/time-slots/getById'
 import { getBookingById } from '@services/bookings/getById'
 import { getSportCenterById } from '@services/sport-centers/get'
 import { updateSportCenter, updateSportCenterSchema } from '@services/sport-centers/update'
+import { getDashboardStats } from '@services/reports/getDashboardStats'
+import { getMonthlyRevenue } from '@services/reports/getMonthlyRevenue'
+import { getWeeklyBookings } from '@services/reports/getWeeklyBookings'
+import { getSportsDistribution } from '@services/reports/getSportsDistribution'
+import { getCourtUtilization } from '@services/reports/getCourtUtilization'
+import { getUpcomingBookings } from '@services/reports/getUpcomingBookings'
+import {getTopBookedCourts} from '@services/courts/getTopBookedCourts'
 
 const router = express.Router()
 
@@ -75,12 +78,16 @@ const apiRoutes = () => {
 
      // bookings
      router.post('/bookings', validateMiddleware(createBookingSchema), createBooking)
+     router.get('/bookings/popular', getTopBookedCourts)
      router.post('/bookings/:id/confirm-payment', confirmPayment)
      router.get('/courts/:id', getCourtById)
      router.get('/time-slots/:id', getTimeSlotById)
 
      // bookings
      router.post('/transactions', validateMiddleware(createTransactionSchema), createTransaction)
+
+     router.get('/categories', getCategories)
+     router.get('/products', getProducts)
 
      // auth
      router.use(authenticateToken)
@@ -103,7 +110,6 @@ const apiRoutes = () => {
      router.get('/bookings/:id', permMiddleware('Theo dõi sân'), getBookingById)
 
      // categories
-     router.get('/categories', permMiddleware('Xem danh mục'), getCategories)
      router.post(
           '/categories',
           permMiddleware('Thêm danh mục'),
@@ -151,7 +157,6 @@ const apiRoutes = () => {
      router.delete('/roles/:id', permMiddleware('Phân quyền'), deleteRole)
 
      // products
-     router.get('/products', permMiddleware('Xem sản phẩm'), getProducts)
      router.post(
           '/products',
           permMiddleware('Thêm sản phẩm'),
@@ -209,14 +214,24 @@ const apiRoutes = () => {
      )
 
      // reports
-     router.get('/reports/revenue/summary', permMiddleware('Xem báo cáo'), getRevenueSummary)
-     router.get('/reports/bookings/status', permMiddleware('Xem báo cáo'), getBookingStatus)
-     router.get('/reports/courts/performance', permMiddleware('Xem báo cáo'), getCourtPerformance)
+     // router.get('/reports/revenue/summary', permMiddleware('Xem báo cáo'), getRevenueSummary)
+     // router.get('/reports/bookings/status', permMiddleware('Xem báo cáo'), getBookingStatus)
+     // router.get('/reports/courts/performance', permMiddleware('Xem báo cáo'), getCourtPerformance)
+     // router.get(
+     //      '/reports/products/top-selling',
+     //      permMiddleware('Xem báo cáo'),
+     //      getProductTopSelling
+     // )
+     router.get('/reports/stats', permMiddleware('Xem báo cáo'), getDashboardStats)
+     router.get('/reports/monthly-revenue', permMiddleware('Xem báo cáo'), getMonthlyRevenue)
+     router.get('/reports/weekly-bookings', permMiddleware('Xem báo cáo'), getWeeklyBookings)
      router.get(
-          '/reports/products/top-selling',
+          '/reports/sports-distribution',
           permMiddleware('Xem báo cáo'),
-          getProductTopSelling
+          getSportsDistribution
      )
+     router.get('/reports/court-utilization', permMiddleware('Xem báo cáo'), getCourtUtilization)
+     router.get('/reports/upcoming-bookings', permMiddleware('Xem báo cáo'), getUpcomingBookings)
 
      return router
 }
