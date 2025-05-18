@@ -31,8 +31,8 @@ export const getCourtsByCus = async (req: Request, res: Response) => {
      if (keywordArray.length > 0) {
           whereCondition[Op.and] = keywordArray.map((term) => ({
                name: { [Op.iLike]: `%${term}%` },
-               location: { [Op.iLike]: `%${term}%` },
-               code: { [Op.iLike]: `%${term}%` },
+               // location: { [Op.iLike]: `%${term}%` },
+               // code: { [Op.iLike]: `%${term}%` },
           }))
      }
 

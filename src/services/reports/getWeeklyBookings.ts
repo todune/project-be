@@ -5,23 +5,35 @@ import moment from 'moment-timezone'
 
 export const getWeeklyBookings = async (req: Request, res: Response) => {
      try {
-          // Get the start of the current week (Monday) and following Sunday
-          const startOfWeek = moment().startOf('week').add(1, 'day').toDate() // Monday
-          const endOfWeek = moment().endOf('week').add(1, 'day').toDate() // Sunday
+          // Cách tính đúng: lấy ngày hiện tại, sau đó tính ngày đầu tuần và cuối tuần
+          const now = moment()
+
+          // Tìm thứ 2 của tuần hiện tại (0 = CN, 1 = T2, ...)
+          const currentDayOfWeek = now.day()
+
+          // Nếu hôm nay là chủ nhật (0), lùi lại 6 ngày để lấy thứ 2 tuần này
+          // Nếu không phải chủ nhật, lùi lại (currentDayOfWeek - 1) ngày để lấy thứ 2
+          const daysToSubtract = currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1
+
+          const startOfWeek = moment().subtract(daysToSubtract, 'days').startOf('day').toDate()
+          const endOfWeek = moment(startOfWeek).add(6, 'days').endOf('day').toDate()
 
           // Query booking counts for each day of the week
           const bookingsByDay = await Booking.findAll({
                attributes: [
-                    [Sequelize.fn('date_trunc', 'day', Sequelize.col('created_at')), 'date'],
+                    [Sequelize.fn('DATE', Sequelize.col('created_at')), 'date'],
                     [Sequelize.fn('COUNT', Sequelize.col('id')), 'count'],
                ],
                where: {
                     created_at: {
                          [Op.between]: [startOfWeek, endOfWeek],
                     },
+                    status: {
+                         [Op.in]: ['Đã thanh toán', 'Chờ thanh toán', 'Mới'],
+                    },
                },
-               group: [Sequelize.fn('date_trunc', 'day', Sequelize.col('created_at'))],
-               order: [[Sequelize.literal('date'), 'ASC']],
+               group: [Sequelize.fn('DATE', Sequelize.col('created_at'))],
+               order: [Sequelize.literal('date ASC')],
           })
 
           // Format the data for the frontend

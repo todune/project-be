@@ -5,6 +5,7 @@ import db from '@configs/db.config'
 import Court from '@models/court.model'
 import TimeSlot from '@models/time-slot.model'
 import { Request, Response } from 'express'
+import { Op } from 'sequelize'
 import { z } from 'zod'
 
 export const updateTimeSlotSchema = z.object({
@@ -92,7 +93,7 @@ export const updateTimeSlot = async (req: Request, res: Response) => {
 
           // Xóa các slot cũ (nếu cần, theo ngày bắt đầu và court)
           await TimeSlot.destroy({
-               where: { court_id },
+               where: { court_id, date: { [Op.gte]: new Date(start_date) }, is_booked: false },
                transaction,
           })
 
