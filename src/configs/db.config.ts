@@ -19,6 +19,7 @@ const db: Sequelize = new Sequelize(
                acquire: parseInt(process.env.DB_POOL_ACQUIRE || '25000'),
                idle: parseInt(process.env.DB_POOL__IDLE || '20000'),
           },
+          
      }
 )
 
