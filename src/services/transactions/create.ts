@@ -8,6 +8,11 @@ import moment from 'moment-timezone'
 import db from '@configs/db.config'
 import sequelize from 'sequelize'
 import { z } from 'zod'
+import { sendBookingTicketToUser } from '@common/utils/sendMail'
+import Category from '@models/category.model'
+import Court from '@models/court.model'
+import User from '@models/user.model'
+import SportCenter from '@models/sport-center.model'
 
 export const createTransactionSchema = z.object({
      booking_id: z.number({ required_error: 'booking_id không được để trống' }),
@@ -39,9 +44,33 @@ export const createTransaction = async (req: Request, res: Response) => {
 
           // 2. check booking is exist
           const booking = await Booking.findByPk(booking_id, {
-               attributes: ['id', 'time_slot_id', 'status'],
+               attributes: ['id', 'time_slot_id', 'status', 'user_id', 'court_id', 'total_price'],
+               include: [
+                 {
+                   model: User,
+                   as: 'userBookingData',
+                   attributes: ['full_name', 'email']
+                 },
+                 {
+                   model: Court,
+                   as: 'courtBookingData',
+                   attributes: ['name', 'location'],
+                   include: [
+                     {
+                       model: Category,
+                       as: 'catCourtData',
+                       attributes: ['name']
+                     }
+                   ]
+                 },
+                 {
+                   model: TimeSlot,
+                   as: 'timeSlotBookingData',
+                   attributes: ['date', 'start_time', 'end_time']
+                 }
+               ],
                transaction,
-          })
+             })
           if (!booking) throw new ApiError('Khung giờ đặt không tồn tại', 404)
           if (booking.status !== 'Chờ thanh toán')
                throw new ApiError('Trạng thái booking không hợp lệ', 400)
@@ -65,6 +94,27 @@ export const createTransaction = async (req: Request, res: Response) => {
                },
                { transaction }
           )
+
+          const sportCenter = await SportCenter.findByPk(1)
+
+          const bookingInfo = {
+               booking_id: booking.dataValues.id,
+               customerName: booking.dataValues.userBookingData.full_name,
+               customerEmail: booking.dataValues.userBookingData.email,
+               courtName: booking.dataValues.courtBookingData.name,
+               categoryName: booking.dataValues.courtBookingData.catCourtData.name,
+               courtLocation: booking.dataValues.courtBookingData.location,
+               bookingDate: moment(booking.dataValues.timeSlotBookingData.date).format('DD/MM/YYYY'),
+               startTime: booking.dataValues.timeSlotBookingData.start_time,
+               endTime: booking.dataValues.timeSlotBookingData.end_time,
+               totalPrice: new Intl.NumberFormat('vi-VN', {
+                 style: 'currency',
+                 currency: 'VND'
+               }).format(booking.dataValues.total_price),
+               sportCenter: sportCenter?.dataValues
+             }
+             
+             await sendBookingTicketToUser(bookingInfo)
 
           await transaction.commit()
           sendJson(res, { id: booking_id }, 'Thanh toán thành công')

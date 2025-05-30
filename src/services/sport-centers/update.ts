@@ -10,6 +10,8 @@ export const updateSportCenterSchema = z.object({
      image_url: z.string().nullable().optional(),
      location: z.string().nullable().optional(),
      address: z.string().nullable().optional(),
+     phone_number: z.string().nullable().optional(),
+     email: z.string().nullable().optional(),
 })
 
 export type UpdateSportCenterInput = z.infer<typeof updateSportCenterSchema>

@@ -33,6 +33,12 @@ const SportCenter = db.define<SportCenterInstance>(
           location: {
                type: DataTypes.STRING,
           },
+          phone_number: {
+               type: DataTypes.STRING,
+          },
+          email: {
+               type: DataTypes.STRING,
+          }
      },
      {
           timestamps: false,
