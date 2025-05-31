@@ -92,10 +92,13 @@ export const updateTimeSlot = async (req: Request, res: Response) => {
           await court.update({ config: newConfig }, { transaction })
 
           // Xóa các slot cũ (nếu cần, theo ngày bắt đầu và court)
+          const date = new Date(start_date)
+          date.setHours(0, 0, 0, 0) // Đặt giờ về đầu ngày
           await TimeSlot.destroy({
-               where: { court_id, date: { [Op.gte]: new Date(start_date) }, is_booked: false },
+               where: { court_id, date: { [Op.gte]: date }, is_booked: false },
                transaction,
           })
+          await transaction.commit()
 
           // Tạo lại khung giờ mới
           const dataSlot = generateWeeklySchedule(new Date(start_date), newConfig as any)
@@ -105,10 +108,9 @@ export const updateTimeSlot = async (req: Request, res: Response) => {
                     date: item.date,
                     court_id,
                }))
-               await TimeSlot.bulkCreate(prepareData, { transaction })
+               await TimeSlot.bulkCreate(prepareData)
           }
 
-          await transaction.commit()
           sendJson(res, { id: court_id }, 'Cập nhật lịch thành công')
      } catch (error) {
           await transaction.rollback()
