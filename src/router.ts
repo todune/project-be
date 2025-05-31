@@ -52,7 +52,9 @@ import { getWeeklyBookings } from '@services/reports/getWeeklyBookings'
 import { getSportsDistribution } from '@services/reports/getSportsDistribution'
 import { getCourtUtilization } from '@services/reports/getCourtUtilization'
 import { getUpcomingBookings } from '@services/reports/getUpcomingBookings'
-import {getTopBookedCourts} from '@services/courts/getTopBookedCourts'
+import { getTopBookedCourts } from '@services/courts/getTopBookedCourts'
+import { refundBooking } from '@services/bookings/refund'
+import { getDailyStats } from '@services/reports/getDailyStats'
 
 const router = express.Router()
 
@@ -93,6 +95,8 @@ const apiRoutes = () => {
      router.use(authenticateToken)
      router.get('/auth/me', getMe)
      router.post('/auth/logout', logout)
+
+     router.post('/bookings/refund/:id', refundBooking)
 
      // sport center
      router.put(
@@ -223,6 +227,7 @@ const apiRoutes = () => {
      //      getProductTopSelling
      // )
      router.get('/reports/stats', permMiddleware('Xem báo cáo'), getDashboardStats)
+     router.get('/reports/daily', permMiddleware('Xem báo cáo'), getDailyStats)
      router.get('/reports/monthly-revenue', permMiddleware('Xem báo cáo'), getMonthlyRevenue)
      router.get('/reports/weekly-bookings', permMiddleware('Xem báo cáo'), getWeeklyBookings)
      router.get(

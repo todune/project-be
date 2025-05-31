@@ -18,9 +18,18 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     const monthlyRevenue = await Booking.sum('total_price', {
       where: {
         status: 'Đã thanh toán',
-        created_at: {
-          [Op.between]: [monthStart, monthEnd]
-        }
+        // created_at: {
+        //   [Op.between]: [monthStart, monthEnd]
+        // }
+      }
+    }) || 0
+
+    const monthlyRefund = await Booking.sum('total_price', {
+      where: {
+        status: 'Hoàn tiền',
+        // created_at: {
+        //   [Op.between]: [monthStart, monthEnd]
+        // }
       }
     }) || 0
     
@@ -28,11 +37,11 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     const threeMonthsAgo = moment().subtract(3, 'months').toDate()
     const activeCustomerIds = await Booking.findAll({
       attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('user_id')), 'user_id']],
-      where: {
-        created_at: {
-          [Op.gte]: threeMonthsAgo
-        }
-      },
+      // where: {
+      //   created_at: {
+      //     [Op.gte]: threeMonthsAgo
+      //   }
+      // },
       raw: true
     })
     const activeCustomers = activeCustomerIds.length
@@ -52,7 +61,8 @@ export const getDashboardStats = async (req: Request, res: Response) => {
         totalBookings,
         monthlyRevenue,
         activeCustomers,
-        pendingBookings
+        pendingBookings,
+        monthlyRefund,
       }
     })
   } catch (error) {

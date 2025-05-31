@@ -87,6 +87,7 @@ export const getBookings = async (req: Request, res: Response) => {
           'Chờ thanh toán': 0,
           'Đã thanh toán': 0,
           Hủy: 0,
+          'Hoàn tiền': 0,
      }
 
      for (const item of typeCounts) {

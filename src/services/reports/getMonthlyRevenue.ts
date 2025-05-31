@@ -16,9 +16,18 @@ export const getMonthlyRevenue = async (req: Request, res: Response) => {
         const startDate = moment(`${year}-${month}-01`).startOf('month').toDate()
         const endDate = moment(`${year}-${month}-01`).endOf('month').toDate()
         
-        const total = await Booking.sum('total_price', {
+        const revenue = await Booking.sum('total_price', {
           where: {
             status: 'Đã thanh toán',
+            created_at: {
+              [Op.between]: [startDate, endDate]
+            }
+          }
+        }) || 0
+
+        const refund = await Booking.sum('total_price', {
+          where: {
+            status: 'Hoàn tiền',
             created_at: {
               [Op.between]: [startDate, endDate]
             }
@@ -27,7 +36,8 @@ export const getMonthlyRevenue = async (req: Request, res: Response) => {
         
         return {
           month,
-          total: parseFloat(total.toString())
+          revenue: parseFloat(revenue.toString()),
+          refund: parseFloat(refund.toString()),
         }
       })
     )
