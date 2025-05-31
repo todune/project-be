@@ -27,7 +27,7 @@ export const createPayMoMoUrl = async (input: {
      const orderInfo = 'Thanh toán qua MOMO'
      const extraData = ''
      const requestId = partnerCode + new Date().getTime()
-     const requestType = 'captureWallet' // captureWallet // payWithATM
+     const requestType = 'payWithATM' // captureWallet // payWithATM
      const orderId = `${input.orderId}-${requestId}` // `${input.orderId}${requestId}`
 
      const rawHash = `accessKey=${accessKey}&amount=${amount}&extraData=${extraData}&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${partnerCode}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=${requestType}`
