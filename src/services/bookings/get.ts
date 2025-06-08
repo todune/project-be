@@ -83,7 +83,7 @@ export const getBookings = async (req: Request, res: Response) => {
 
      const menu: Record<string, number> = {
           'Tất cả': 0,
-          Mới: 0,
+          "Đã đặt": 0,
           'Chờ thanh toán': 0,
           'Đã thanh toán': 0,
           Hủy: 0,

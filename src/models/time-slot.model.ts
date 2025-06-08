@@ -12,6 +12,7 @@ export interface TimeSlotInstance extends Model {
      is_booked: boolean
      is_peak_hour: boolean
      lock_expires_at?: Date
+     is_locked?: boolean
 }
 
 const TimeSlot = db.define<TimeSlotInstance>(
@@ -50,6 +51,10 @@ const TimeSlot = db.define<TimeSlotInstance>(
                defaultValue: false,
           },
           is_peak_hour: {
+               type: DataTypes.BOOLEAN,
+               defaultValue: false,
+          },
+          is_locked: {
                type: DataTypes.BOOLEAN,
                defaultValue: false,
           },

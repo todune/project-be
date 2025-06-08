@@ -15,6 +15,7 @@ import 'dotenv/config'
 import { seeder } from '@configs/seeder'
 import { timeSlotCronJob } from '@common/cron-jobs/timeSlotCronJob'
 import '@models/index'
+import { dailySlotCleanupCronJob, expiredSlotCronJob } from '@common/cron-jobs/expiredCronJob'
 
 export class Application {
      static async createApplication() {
@@ -37,6 +38,8 @@ export class Application {
           // await seeder()
 
           timeSlotCronJob()
+          expiredSlotCronJob()
+          dailySlotCleanupCronJob()
 
           this.handleExit(server)
 

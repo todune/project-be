@@ -44,5 +44,6 @@ const Court = db.define<CourtInstance>('Court', {
 })
 
 Court.belongsTo(Category, { foreignKey: 'category_id', as: 'catCourtData', onDelete: 'CASCADE' })
+Category.hasMany(Court, { as: 'courtCategoryData', foreignKey: 'category_id' })
 
 export default Court

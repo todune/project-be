@@ -173,7 +173,7 @@ export const createBooking = async (req: Request, res: Response) => {
                     time_slot_id,
                     price_at_booking: isTimeSlotExist.price, // Giá sân đã tính
                     total_price: totalPrice, // Tổng tiền (sân + dịch vụ)
-                    status: 'Mới',
+                    status: 'Đã đặt',
                     notes,
                },
                { transaction }

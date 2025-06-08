@@ -29,7 +29,7 @@ export const getWeeklyBookings = async (req: Request, res: Response) => {
                          [Op.between]: [startOfWeek, endOfWeek],
                     },
                     status: {
-                         [Op.in]: ['Đã thanh toán', 'Chờ thanh toán', 'Mới'],
+                         [Op.in]: ['Đã thanh toán', 'Chờ thanh toán', 'Đã đặt'],
                     },
                },
                group: [Sequelize.fn('DATE', Sequelize.col('created_at'))],

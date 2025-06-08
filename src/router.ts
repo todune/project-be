@@ -55,6 +55,7 @@ import { getUpcomingBookings } from '@services/reports/getUpcomingBookings'
 import { getTopBookedCourts } from '@services/courts/getTopBookedCourts'
 import { refundBooking } from '@services/bookings/refund'
 import { getDailyStats } from '@services/reports/getDailyStats'
+import { getOccupancyRateReport } from '@services/reports/getRate'
 
 const router = express.Router()
 
@@ -227,6 +228,7 @@ const apiRoutes = () => {
      //      getProductTopSelling
      // )
      router.get('/reports/stats', permMiddleware('Xem báo cáo'), getDashboardStats)
+     router.get('/reports/rate', permMiddleware('Xem báo cáo'), getOccupancyRateReport)
      router.get('/reports/daily', permMiddleware('Xem báo cáo'), getDailyStats)
      router.get('/reports/monthly-revenue', permMiddleware('Xem báo cáo'), getMonthlyRevenue)
      router.get('/reports/weekly-bookings', permMiddleware('Xem báo cáo'), getWeeklyBookings)
@@ -235,7 +237,7 @@ const apiRoutes = () => {
           permMiddleware('Xem báo cáo'),
           getSportsDistribution
      )
-     router.get('/reports/court-utilization', permMiddleware('Xem báo cáo'), getCourtUtilization)
+     router.get('/reports/court-utilization', permMiddleware('Xem báo cáo'), getOccupancyRateReport)
      router.get('/reports/upcoming-bookings', permMiddleware('Xem báo cáo'), getUpcomingBookings)
 
      return router

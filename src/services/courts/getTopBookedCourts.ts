@@ -42,7 +42,7 @@ export const getTopBookedCourts = async (req: Request, res: Response) => {
                          [Op.gte]: startDate,
                     },
                     status: {
-                         [Op.in]: ['Đã thanh toán', 'Mới'],
+                         [Op.in]: ['Đã thanh toán', 'Đã đặt'],
                     },
                },
                group: ['court_id', 'courtBookingData.id', 'courtBookingData.catCourtData.id'],
