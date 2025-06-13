@@ -18,35 +18,28 @@ export function expiredSlotCronJob() {
                const currentMoment = moment()
                const currentDate = currentMoment.format('YYYY-MM-DD')
                const currentTime = currentMoment.format('HH:mm:ss')
+               const currentDateTime = currentMoment.format('YYYY-MM-DD HH:mm:ss')
 
                console.log('Checking slots for date:', currentDate, 'current time:', currentTime)
 
                // Tìm các slot đã quá thời gian nhưng chưa được lock
                const expiredSlots = await TimeSlot.findAll({
                     where: {
-                         end_time: {
-                              [Op.lt]: currentTime
-                         },
-                         is_locked: false, 
-                         [Op.or]: [
-                              // Slot trong ngày hôm nay
+                         [Op.and]: [
+                              // Điều kiện 1: Chưa được lock và chưa được book
                               {
-                                   date: {
-                                        [Op.eq]: currentDate
-                                   }
+                                   is_locked: false
                               },
-                              // // Thời gian kết thúc đã qua
-                              // {
-                              //      end_time: {
-                              //           [Op.lt]: currentTime
-                              //      }
-                              // },
-                              // Chưa được lock
-                              
-                              // Chưa được book
                               {
                                    is_booked: false
-                              }
+                              },
+                              // Điều kiện 2: Slot đã expired (so sánh datetime)
+                              db.where(
+                                   db.fn('CONCAT', db.col('date'), ' ', db.col('start_time')),
+                                   {
+                                        [Op.lte]: currentDateTime
+                                   }
+                              )
                          ]
                     },
                     attributes: ['id', 'date', 'start_time', 'end_time', 'court_id'],
