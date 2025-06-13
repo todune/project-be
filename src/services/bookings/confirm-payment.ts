@@ -9,6 +9,7 @@ import db from '@configs/db.config'
 import moment from 'moment-timezone'
 import { z } from 'zod'
 import 'dotenv/config'
+import { createVnpayPaymentUrl } from '@common/utils/createVnpayPaymentUrl'
 
 export const confirmPaymentSchema = z.object({
      user_id: z.number({ required_error: 'user_id không được để trống' }),
@@ -68,12 +69,19 @@ export const confirmPayment = async (req: Request, res: Response) => {
           }
 
           // 4. create payment url
-          const payUrl = await createPayMoMoUrl({
-               orderId: `${booking.id}`,
+          // const payUrl = await createPayMoMoUrl({
+          //      orderId: `${booking.id}`,
+          //      amount: booking.total_price,
+          //      redirectUrl: redirect_url,
+          //      ipnUrl: 'https://callback.url/notify',
+          // })
+          const { payUrl } = createVnpayPaymentUrl({
+               orderId: `${booking.id}-${Date.now()}`,
                amount: booking.total_price,
-               redirectUrl: redirect_url,
-               ipnUrl: 'https://callback.url/notify',
+               returnUrl: redirect_url,
           })
+
+          console.log('payUrl: ', payUrl)
 
           // lock time slot
           const holdUntil = now
