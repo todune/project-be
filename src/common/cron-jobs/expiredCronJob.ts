@@ -15,7 +15,7 @@ export function expiredSlotCronJob() {
           })
 
           try {
-               const currentMoment = moment()
+               const currentMoment = moment().tz('Asia/Ho_Chi_Minh') // Sử dụng múi giờ Việt Nam
                const currentDate = currentMoment.format('YYYY-MM-DD')
                const currentTime = currentMoment.format('HH:mm:ss')
                const currentDateTime = currentMoment.format('YYYY-MM-DD HH:mm:ss')
@@ -89,7 +89,7 @@ export function dailySlotCleanupCronJob() {
           })
 
           try {
-               const yesterday = moment().subtract(1, 'day').format('YYYY-MM-DD')
+               const yesterday = moment().tz('Asia/Ho_Chi_Minh').subtract(1, 'day').format('YYYY-MM-DD')
 
                console.log('Locking all slots from yesterday:', yesterday)
 
